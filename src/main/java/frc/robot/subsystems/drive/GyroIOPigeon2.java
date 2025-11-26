@@ -1,16 +1,3 @@
-// Copyright 2021-2024 FRC 6328
-// http://github.com/Mechanical-Advantage
-//
-// This program is free software; you can redistribute it and/or
-// modify it under the terms of the GNU General Public License
-// version 3 as published by the Free Software Foundation or
-// available in the root directory of this project.
-//
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU General Public License for more details.
-
 package frc.robot.subsystems.drive;
 
 import java.util.Queue;
@@ -43,7 +30,6 @@ public class GyroIOPigeon2 implements GyroIO {
 
   private final StatusSignal<Angle> yaw = pidgey.getYaw();
   private final Queue<Double> yawPositionQueue;
-  private final Queue<Double> yawTimestampQueue;
   private final StatusSignal<AngularVelocity> yawVelocity = pidgey.getAngularVelocityZWorld();
 
   private final Notification gyroConnectedNotification = new Notification(
@@ -57,7 +43,6 @@ public class GyroIOPigeon2 implements GyroIO {
     pidgey.getConfigurator().setYaw(0.0);
     yaw.setUpdateFrequency(DriveConstants.ODOMETRY_FREQUENCY);
     yawVelocity.setUpdateFrequency(100.0);
-    yawTimestampQueue = PhoenixOdometryThread.getInstance().makeTimestampQueue();
     yawPositionQueue = PhoenixOdometryThread.getInstance().registerSignal(pidgey, pidgey.getYaw());
 
     if (!pidgey.isConnected()) {
@@ -71,12 +56,9 @@ public class GyroIOPigeon2 implements GyroIO {
 
     inputs.yawPosition = Rotation2d.fromDegrees(yaw.getValueAsDouble());
     inputs.yawVelocityRadPerSec = Units.degreesToRadians(yawVelocity.getValueAsDouble());
-
-    inputs.odometryYawTimestamps = yawTimestampQueue.stream().mapToDouble((Double value) -> value).toArray();
     inputs.odometryYawPositions = yawPositionQueue.stream()
         .map((Double value) -> Rotation2d.fromDegrees(value))
         .toArray(Rotation2d[]::new);
-    yawTimestampQueue.clear();
     yawPositionQueue.clear();
   }
 
