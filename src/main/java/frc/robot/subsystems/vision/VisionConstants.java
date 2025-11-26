@@ -1,7 +1,3 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
-
 package frc.robot.subsystems.vision;
 
 import edu.wpi.first.math.geometry.Pose2d;
@@ -26,12 +22,14 @@ public class VisionConstants {
   public static final double MEGATAG2_ANGULAR_FACTOR = 2;
 
   public static final Translation3d LEFT_ROBOT_TO_CAMERA_TRANSLATION = new Translation3d(-0.117, 0.2814, 0.2);
-  public static final Rotation3d LEFT_ROBOT_TO_CAMERA_ROTATION = new Rotation3d(180,28, -15);
-  public static final Transform3d LEFT_ROBOT_TO_CAMERA = new Transform3d(LEFT_ROBOT_TO_CAMERA_TRANSLATION, LEFT_ROBOT_TO_CAMERA_ROTATION);
+  public static final Rotation3d LEFT_ROBOT_TO_CAMERA_ROTATION = new Rotation3d(180, 28, -15);
+  public static final Transform3d LEFT_ROBOT_TO_CAMERA = new Transform3d(LEFT_ROBOT_TO_CAMERA_TRANSLATION,
+      LEFT_ROBOT_TO_CAMERA_ROTATION);
 
   public static final Translation3d RIGHT_ROBOT_TO_CAMERA_TRANSLATION = new Translation3d(0.177, 0.214, 0.2);
-  public static final Rotation3d RIGHT_ROBOT_TO_CAMERA_ROTATION = new Rotation3d(180,28, 15);
-  public static final Transform3d RIGHT_ROBOT_TO_CAMERA = new Transform3d(RIGHT_ROBOT_TO_CAMERA_TRANSLATION, RIGHT_ROBOT_TO_CAMERA_ROTATION);
+  public static final Rotation3d RIGHT_ROBOT_TO_CAMERA_ROTATION = new Rotation3d(180, 28, 15);
+  public static final Transform3d RIGHT_ROBOT_TO_CAMERA = new Transform3d(RIGHT_ROBOT_TO_CAMERA_TRANSLATION,
+      RIGHT_ROBOT_TO_CAMERA_ROTATION);
 
   /**
    * A record to store position data for an observation.
@@ -39,7 +37,8 @@ public class VisionConstants {
    * @param tx The angle from the target on the x axis.
    * @param ty The angle from the target on the y axis.
    */
-  public static record TargetObservation(Rotation2d tx, Rotation2d ty) {}
+  public static record TargetObservation(Rotation2d tx, Rotation2d ty) {
+  }
 
   /**
    * A Record to store data about the robots pose calculated from vision
@@ -65,7 +64,8 @@ public class VisionConstants {
       double ambiguity,
       int tagCount,
       double averageTagDistance,
-      ObservationType type) {}
+      ObservationType type) {
+  }
 
   public enum ObservationType {
     MEGATAG_1,

@@ -100,8 +100,6 @@ public class DriveSubsystem extends SubsystemBase {
 
     try {
       PathPlannerUtil.writeSettings(config, moduleConfig, DRIVE_GEAR_RATIO);
-      // PathPlannerUtil.writeSettings(config, moduleConfig,
-      // getFFCharacterizationVelocity());
       RobotConfig.fromGUISettings().hasValidConfig();
     } catch (IOException | ParseException e) {
       e.printStackTrace();
@@ -127,7 +125,7 @@ public class DriveSubsystem extends SubsystemBase {
         },
         this);
 
-    // Allows AdvantageKit to interface with PP
+    // Allows AdvantageKit to interface with PathPlanner
     Pathfinding.setPathfinder(new LocalADStarAK());
     CommandScheduler.getInstance().schedule(PathfindingCommand.warmupCommand());
 

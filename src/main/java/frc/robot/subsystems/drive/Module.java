@@ -26,7 +26,7 @@ public class Module {
   private final ModuleIOInputsAutoLogged inputs = new ModuleIOInputsAutoLogged();
   private final int index;
 
-  //private Rotation2d turnRelativeOffset = null; // Relative + Offset = Absolute
+  // private Rotation2d turnRelativeOffset = null; // Relative + Offset = Absolute
   private SwerveModulePosition[] odometryPositions = new SwerveModulePosition[] {};
 
   public Module(ModuleIO io, int index) {
@@ -47,21 +47,14 @@ public class Module {
   public void periodic() {
     Logger.processInputs("Inputs/Drive/Module" + index, inputs);
 
-    // On first cycle, reset relative turn encoder
-    // Wait until absolute angle is nonzero in case it wasn't initialized yet
-    // if (turnRelativeOffset == null && inputs.turnPosition.getRadians() != 0.0) {
-    //   turnRelativeOffset = inputs.turnPosition.minus(inputs.turnPosition);
-    // }
-
-
     // Calculate positions for odometry
     int sampleCount = inputs.odometryTimestamps.length; // All signals are sampled together
     odometryPositions = new SwerveModulePosition[sampleCount];
     for (int i = 0; i < sampleCount; i++) {
       double positionMeters = inputs.odometryDrivePositionsRad[i] * DriveConstants.WHEEL_RADIUS;
       Rotation2d angle = inputs.odometryTurnPositions[i]
-        //.plus(turnRelativeOffset != null ? turnRelativeOffset : new Rotation2d())
-        ;
+      // .plus(turnRelativeOffset != null ? turnRelativeOffset : new Rotation2d())
+      ;
       odometryPositions[i] = new SwerveModulePosition(positionMeters, angle);
     }
   }
@@ -79,7 +72,9 @@ public class Module {
     io.setDriveVelocity(targetState.speedMetersPerSecond / DriveConstants.WHEEL_RADIUS);
   }
 
-  /** Runs the module with the specified output while controlling to zero degrees. */
+  /**
+   * Runs the module with the specified output while controlling to zero degrees.
+   */
   public void runCharacterization(double output) {
     io.setDriveVoltage(output);
     io.setTurnPosition(new Rotation2d());
@@ -99,12 +94,6 @@ public class Module {
 
   /** Returns the current turn angle of the module. */
   public Rotation2d getAngle() {
-    // if (turnRelativeOffset == null) {
-    //   return new Rotation2d();
-    // } else {
-    //   return inputs.turnPosition;
-    // }
-
     return inputs.turnPosition;
   }
 

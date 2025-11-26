@@ -55,6 +55,7 @@ public class RobotContainer {
   private final LoggedDashboardChooser<Command> autoChooser;
   private double driveMultiplier = 0.4;
 
+  // region Subsystem init
   /**
    * The container for the robot. Contains subsystems, IO devices, and commands.
    */
@@ -127,9 +128,7 @@ public class RobotContainer {
         "Drive SysId (Dynamic Forward)", drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
     autoChooser.addOption(
         "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
-    autoChooser.addOption("Spinny Auto", DriveCommands.spinAuto(0.6, drive));
 
-    // endregion
     // Configure the button bindings
     configureButtonBindings();
   }
@@ -188,12 +187,11 @@ public class RobotContainer {
     // region Operator controls
 
     /**
-     * This is where you define button bindings and controls for our operator board,
+     * This is where you would define button bindings and controls for our operator
+     * board,
      * by default it has nothing since operator controls the robot's mechanisms and
      * noe the drive base
      */
-
-    // endregion
   }
 
   /**

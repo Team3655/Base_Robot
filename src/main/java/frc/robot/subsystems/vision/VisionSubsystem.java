@@ -69,13 +69,13 @@ public class VisionSubsystem extends SubsystemBase {
     double x = observation.pose().getX();
     double y = observation.pose().getY();
 
-    boolean isInsideBlueLeft = (y < slope*x + Units.inchesToMeters(267.2));
-    boolean isInsideBlueRight = (y > -slope*x + Units.inchesToMeters(49.95));
-    boolean isInsideRedLeft = (y > slope*x - Units.inchesToMeters(474.187));
-    boolean isInsideRedRight = (y < -slope*x + Units.inchesToMeters(791.337));
+    boolean isInsideBlueLeft = (y < slope * x + Units.inchesToMeters(267.2));
+    boolean isInsideBlueRight = (y > -slope * x + Units.inchesToMeters(49.95));
+    boolean isInsideRedLeft = (y > slope * x - Units.inchesToMeters(474.187));
+    boolean isInsideRedRight = (y < -slope * x + Units.inchesToMeters(791.337));
     boolean isInsideRectangle = (x > 0 && x < tagLayout.getFieldLength() && y > 0 && y < tagLayout.getFieldWidth());
 
-    if(isInsideBlueRight && isInsideBlueLeft && isInsideRedLeft && isInsideRedRight && isInsideRectangle) {
+    if (isInsideBlueRight && isInsideBlueLeft && isInsideRedLeft && isInsideRedRight && isInsideRectangle) {
       return true;
     } else {
       return false;
@@ -123,7 +123,6 @@ public class VisionSubsystem extends SubsystemBase {
                 || observation.averageTagDistance() > VisionConstants.MULTI_TAG_MAXIMUM // Must not be too far away
                 // Must be within the field
                 || !isInsideField(observation)
-
 
             // Single tag in observation
             : observation.tagCount() == 0 // Must have at least one tag

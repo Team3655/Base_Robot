@@ -9,7 +9,6 @@ import frc.robot.util.PhysicsUtil;
 /** Static values for the drive subsystem */
 public class DriveConstants {
 
-
   public static final double ODOMETRY_FREQUENCY = 250.0;
 
   // 16.9 rot/s of wheel -> 5.409929 m/s -> 17.7 ft/s
@@ -32,29 +31,27 @@ public class DriveConstants {
   public static final Rotation2d COMPBOT_FRONT_LEFT_ENCODER_OFFSET = Rotation2d.fromRotations(-0.268066);
   public static final Rotation2d COMPBOT_FRONT_RIGHT_ENCODER_OFFSET = Rotation2d.fromRotations(-0.105469);
 
-
   public static final double PROTOBOT_DRIVE_GEAR_RATIO = (50.0 / 16.0) * (17.0 / 27.0) * (45.0 / 15.0);
 
   public static final double COMPBOT_DRIVE_GEAR_RATIO = (50.0 / 16.0) * (16.0 / 28.0) * (45.0 / 15.0);
-  
+
   public static final double TURN_GEAR_RATIO = 150.0 / 7.0;
 
   public static final double BATTERY_MASS_KG = Units.lbsToKilograms(14);
   public static final double BUMPER_MASS_KG = Units.lbsToKilograms(16);
 
-
   public static final double COMPBOT_CHASSIS_MASS_KG = Units.lbsToKilograms(108.1);
   public static final double COMPBOT_MASS_KG = COMPBOT_CHASSIS_MASS_KG + BUMPER_MASS_KG + BATTERY_MASS_KG;
   public static final double COMPBOT_MOI = PhysicsUtil.estimateRobotMOI(
-    COMPBOT_MASS_KG, 
-    BUMPER_WIDTH_X, 
-    BUMPER_WIDTH_Y);
+      COMPBOT_MASS_KG,
+      BUMPER_WIDTH_X,
+      BUMPER_WIDTH_Y);
 
   public static final double PROTOBOT_CHASSIS_MASS_KG = Units.lbsToKilograms(100);
   public static final double PROTOBOT_MASS_KG = PROTOBOT_CHASSIS_MASS_KG + BUMPER_MASS_KG + BATTERY_MASS_KG;
   public static final double PROTOBOT_MOI = PhysicsUtil.estimateRobotMOI(
-      PROTOBOT_MASS_KG, 
-      BUMPER_WIDTH_X, 
+      PROTOBOT_MASS_KG,
+      BUMPER_WIDTH_X,
       BUMPER_WIDTH_Y);
 
   public static final double WHEEL_RADIUS = Units.inchesToMeters(1.906);

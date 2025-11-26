@@ -15,10 +15,9 @@ package frc.robot.commands;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
@@ -28,7 +27,6 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.PathConstraints;
 
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -41,7 +39,6 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.RobotState;
 import frc.robot.subsystems.drive.DriveConstants;
@@ -98,7 +95,8 @@ public class DriveCommands {
 
           // Logger.recordOutput("Drive/Commands/omega", omega);
           // Logger.recordOutput("Drive/Commands/linear velocity", linearVelocity);
-          // Logger.recordOutput("Drive/Commands/linear magnitude", linearVelocity.getNorm());
+          // Logger.recordOutput("Drive/Commands/linear magnitude",
+          // linearVelocity.getNorm());
 
           // Convert to field relative speeds & send command
           ChassisSpeeds speeds = new ChassisSpeeds(
@@ -256,20 +254,17 @@ public class DriveCommands {
   }
 
   public static Command pathFindToPose(Supplier<Pose2d> target, DriveSubsystem drive) {
- 
-     var constraints = new PathConstraints(
-         3, 
-         1.5, 
-         4 * Math.PI, 
-         8 * Math.PI);
- 
-     return Commands.defer(
-         () -> AutoBuilder.pathfindToPose(target.get(), constraints), 
-         new HashSet<Subsystem>(Arrays.asList(drive)));
-   }
-   public static Command spinAuto(double speed, DriveSubsystem drive){
-    return Commands.run(() -> drive.runVelocity(new ChassisSpeeds(0,0,speed)), drive);
-   }
+
+    var constraints = new PathConstraints(
+        3,
+        1.5,
+        4 * Math.PI,
+        8 * Math.PI);
+
+    return Commands.defer(
+        () -> AutoBuilder.pathfindToPose(target.get(), constraints),
+        Set.of(drive));
+  }
 
   private static class WheelRadiusCharacterizationState {
     double[] positions = new double[4];

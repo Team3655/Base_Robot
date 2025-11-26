@@ -1,1 +1,37 @@
-{"maxDriveSpeed":5.394959999999999,"defaultMaxAngAccel":720.0,"autoFolders":["Back Left Side","Back Right Side","Center Autos","Front Right Side","Front Left Side","Tests"],"robotFeatures":["{\"name\":\"Rectangle\",\"type\":\"rounded_rect\",\"data\":{\"center\":{\"x\":0.0,\"y\":0.0},\"size\":{\"width\":0.13,\"length\":1.0},\"borderRadius\":0.05,\"strokeWidth\":0.0075,\"filled\":false}}"],"bumperOffsetX":0.0,"bumperOffsetY":0.0,"blModuleY":0.263525,"robotMass":62.6410552,"wheelCOF":1.5,"blModuleX":-0.263525,"defaultNominalVoltage":12.0,"robotTrackwidth":0.546,"defaultMaxAngVel":540.0,"robotMOI":7.61562999112622,"flModuleX":0.263525,"flModuleY":0.263525,"brModuleX":-0.263525,"brModuleY":-0.263525,"robotWidth":0.85,"frModuleY":-0.263525,"frModuleX":0.263525,"driveCurrentLimit":155.0,"driveGearing":5.357142857142857,"holonomicMode":true,"defaultMaxAccel":2.0,"robotLength":0.86,"driveMotorType":"krakenX60FOC","pathFolders":["Back Center Paths","Back Left Side Paths","Back Right Side Paths","Front Left Side Paths","Front Right Side Paths","4pc experiment"],"defaultMaxVel":4.0,"driveWheelRadius":0.0492506}
+{
+  "maxDriveSpeed": 5.394959999999999,
+  "defaultMaxAngAccel": 720.0,
+  "autoFolders": [
+    "Back Left Side",
+    "Back Right Side",
+    "Center Autos",
+    "Front Right Side",
+    "Front Left Side",
+    "Tests"
+  ],
+  "bumperOffsetX": 0.0,
+  "bumperOffsetY": 0.0,
+  "blModuleY": 0.263525,
+  "robotMass": 62.6410552,
+  "wheelCOF": 1.5,
+  "blModuleX": -0.263525,
+  "defaultNominalVoltage": 12.0,
+  "robotTrackwidth": 0.546,
+  "defaultMaxAngVel": 540.0,
+  "robotMOI": 7.61562999112622,
+  "flModuleX": 0.263525,
+  "flModuleY": 0.263525,
+  "brModuleX": -0.263525,
+  "brModuleY": -0.263525,
+  "robotWidth": 0.85,
+  "frModuleY": -0.263525,
+  "frModuleX": 0.263525,
+  "driveCurrentLimit": 155.0,
+  "driveGearing": 5.357142857142857,
+  "holonomicMode": true,
+  "defaultMaxAccel": 2.0,
+  "robotLength": 0.86,
+  "driveMotorType": "krakenX60FOC",
+  "defaultMaxVel": 4.0,
+  "driveWheelRadius": 0.0492506
+}
