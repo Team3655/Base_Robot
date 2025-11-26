@@ -46,8 +46,6 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.RobotState;
 import frc.robot.subsystems.drive.DriveConstants;
 import frc.robot.subsystems.drive.DriveSubsystem;
-import frc.robot.subsystems.vision.VisionSubsystem;
-import frc.robot.subsystems.vision.VisionConstants.TargetObservation;
 import frc.robot.util.JoystickUtils;
 
 public class DriveCommands {
@@ -57,8 +55,6 @@ public class DriveCommands {
   private static final double FF_RAMP_RATE = 0.1; // volts/vec
   private static final double WHEEL_RADIUS_RAMP_RATE = 0.15; // rads/sec^2
   private static final double WHEEL_RADIUS_MAX_VELOCITY = 0.5; // rads/sec
-
-  private static final PIDController reefAlignmentTranslationPID = new PIDController(3, 0, 0);
 
   private static Translation2d getLinearVelocityFromJoysticks(double x, double y) {
     // Apply deadband
@@ -122,24 +118,6 @@ public class DriveCommands {
 
         },
         drive);
-  }
-
-  public static Command reefAlignment(DriveSubsystem drive, VisionSubsystem vision, Supplier<Rotation2d> setpoint) {
-
-    return Commands.run(() -> {
-      TargetObservation currentOffsets = vision.getLatestTargetObservation(2); // Back camera observation
-
-      ChassisSpeeds speeds = new ChassisSpeeds(
-          reefAlignmentTranslationPID.calculate(currentOffsets.tx().getDegrees(), setpoint.get().getDegrees())
-              * DriveConstants.MAX_LINEAR_SPEED,
-          0,
-          0);
-
-      drive.runVelocity(
-          ChassisSpeeds.fromRobotRelativeSpeeds(
-              speeds,
-              RobotState.getInstance().getRotation()));
-            }, drive, vision);
   }
 
   /**
