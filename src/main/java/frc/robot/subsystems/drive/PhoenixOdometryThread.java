@@ -13,17 +13,10 @@ import java.util.concurrent.ArrayBlockingQueue;
 import org.littletonrobotics.junction.Logger;
 
 /**
- * Provides an interface for asynchronously reading high-frequency measurements
- * to a set of queues.
- *
- * <p>
- * This version is intended for Phoenix 6 devices on both the RIO and CANivore
- * buses. When using
- * a CANivore, the thread uses the "waitForAll" blocking method to enable more
- * consistent sampling.
- * This also allows Phoenix Pro users to benefit from lower latency between
- * devices using CANivore
- * time synchronization.
+ * A simplified version of the PhoenixOdometryThread from AdvantageKit
+ * Uses a shared timestamp queue, along with simpler lock functionality
+ * It still has the same functionality: reading multiple StatusSignals at a high
+ * rate at the same time
  */
 public class PhoenixOdometryThread extends Thread {
   private final List<BaseStatusSignal> signals = new ArrayList<>();
@@ -107,7 +100,7 @@ public class PhoenixOdometryThread extends Thread {
           timestamp -= totalLatency / signalsArray.length;
         }
 
-        // Save data to queues (only need odometryLock for queue access)
+        // Uses driveSubsystem's odometry lock instead of a separate one
         DriveSubsystem.odometryLock.lock();
         try {
           // Add timestamp to shared queue
