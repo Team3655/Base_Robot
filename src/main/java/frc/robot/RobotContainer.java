@@ -147,7 +147,7 @@ public class RobotContainer {
             new ModuleIOSim());
 
         vision = new VisionSubsystem(
-            new VisionIOSim("left", VisionConstants.LEFT_ROBOT_TO_CAMERA));
+            new VisionIOSim("left", VisionConstants.ROBOT_TO_CAMERA));
         break;
 
       // Replayed robot, disable IO implementations

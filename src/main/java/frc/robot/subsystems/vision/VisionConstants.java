@@ -1,5 +1,6 @@
 package frc.robot.subsystems.vision;
 
+import frc.robot.Constants;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
@@ -21,15 +22,11 @@ public class VisionConstants {
   public static final double MEGATAG2_LINEAR_FACTOR = 0.25;
   public static final double MEGATAG2_ANGULAR_FACTOR = 2;
 
-  public static final Translation3d LEFT_ROBOT_TO_CAMERA_TRANSLATION = new Translation3d(-0.117, 0.2814, 0.2);
-  public static final Rotation3d LEFT_ROBOT_TO_CAMERA_ROTATION = new Rotation3d(180, 28, -15);
-  public static final Transform3d LEFT_ROBOT_TO_CAMERA = new Transform3d(LEFT_ROBOT_TO_CAMERA_TRANSLATION,
-      LEFT_ROBOT_TO_CAMERA_ROTATION);
-
-  public static final Translation3d RIGHT_ROBOT_TO_CAMERA_TRANSLATION = new Translation3d(0.177, 0.214, 0.2);
-  public static final Rotation3d RIGHT_ROBOT_TO_CAMERA_ROTATION = new Rotation3d(180, 28, 15);
-  public static final Transform3d RIGHT_ROBOT_TO_CAMERA = new Transform3d(RIGHT_ROBOT_TO_CAMERA_TRANSLATION,
-      RIGHT_ROBOT_TO_CAMERA_ROTATION);
+  public static final Translation3d ROBOT_TO_CAMERA_TRANSLATION = new Translation3d(Constants.BUMPER_WIDTH_X / 2, 0,
+      0.2);
+  public static final Rotation3d ROBOT_TO_CAMERA_ROTATION = new Rotation3d(0, 0, 0);
+  public static final Transform3d ROBOT_TO_CAMERA = new Transform3d(ROBOT_TO_CAMERA_TRANSLATION,
+      ROBOT_TO_CAMERA_ROTATION);
 
   /**
    * A record to store position data for an observation.
