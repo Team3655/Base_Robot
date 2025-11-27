@@ -31,9 +31,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import frc.robot.Constants;
 import frc.robot.RobotState;
-import frc.robot.Constants.RobotType;
 import frc.robot.RobotState.OdometryMeasurement;
 import frc.robot.util.LocalADStarAK;
 import frc.robot.util.PathPlannerUtil;
@@ -149,9 +147,7 @@ public class DriveSubsystem extends SubsystemBase {
     modules[1] = new Module(frModuleIO, 1);
     modules[2] = new Module(blModuleIO, 2);
     modules[3] = new Module(brModuleIO, 3);
-    final double DRIVE_GEAR_RATIO = (Constants.currentRobot == RobotType.COMPBOT)
-        ? DriveConstants.COMPBOT_DRIVE_GEAR_RATIO
-        : DriveConstants.PROTOBOT_DRIVE_GEAR_RATIO;
+    final double DRIVE_GEAR_RATIO = DriveConstants.DRIVE_GEAR_RATIO;
 
     // Start threads (no-op for each if no signals have been created)
     PhoenixOdometryThread.getInstance().start();
@@ -165,18 +161,11 @@ public class DriveSubsystem extends SubsystemBase {
         DriveConstants.DRIVE_CURRENT_LIMIT,
         1);
 
-    RobotConfig config;
-
-    config = (Constants.currentRobot == RobotType.COMPBOT) ? new RobotConfig(
-        DriveConstants.COMPBOT_MASS_KG,
-        DriveConstants.COMPBOT_MOI,
+    RobotConfig config = new RobotConfig(
+        DriveConstants.ROBOT_MASS_KG,
+        DriveConstants.ROBOT_MOI,
         moduleConfig,
-        DriveConstants.moduleTranslations)
-        : new RobotConfig(
-            DriveConstants.PROTOBOT_MASS_KG,
-            DriveConstants.PROTOBOT_MOI,
-            moduleConfig,
-            DriveConstants.moduleTranslations);
+        DriveConstants.moduleTranslations);
 
     try {
       PathPlannerUtil.writeSettings(config, moduleConfig, DRIVE_GEAR_RATIO);

@@ -22,7 +22,6 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
 import frc.robot.Constants;
-import frc.robot.Constants.RobotType;
 
 import java.util.Queue;
 
@@ -70,57 +69,39 @@ public class ModuleIOTalonFX implements ModuleIO {
 
   public ModuleIOTalonFX(int index) {
 
-    Rotation2d flEncoderOffset = (Constants.currentRobot == RobotType.COMPBOT)
-        ? DriveConstants.COMPBOT_FRONT_LEFT_ENCODER_OFFSET
-        : DriveConstants.PROTOBOT_FRONT_LEFT_ENCODER_OFFSET;
-
-    Rotation2d frEncoderOffset = (Constants.currentRobot == RobotType.COMPBOT)
-        ? DriveConstants.COMPBOT_FRONT_RIGHT_ENCODER_OFFSET
-        : DriveConstants.PROTOBOT_FRONT_RIGHT_ENCODER_OFFSET;
-
-    Rotation2d blEncoderOffset = (Constants.currentRobot == RobotType.COMPBOT)
-        ? DriveConstants.COMPBOT_BACK_LEFT_ENCODER_OFFSET
-        : DriveConstants.PROTOBOT_BACK_LEFT_ENCODER_OFFSET;
-
-    Rotation2d brEncoderOffset = (Constants.currentRobot == RobotType.COMPBOT)
-        ? DriveConstants.COMPBOT_BACK_RIGHT_ENCODER_OFFSET
-        : DriveConstants.PROTOBOT_BACK_RIGHT_ENCODER_OFFSET;
-
     switch (index) {
       // Front left
       case 0:
         driveTalon = new TalonFX(1, Constants.CANIVORE);
         turnTalon = new TalonFX(2, Constants.CANIVORE);
         cancoder = new CANcoder(3, Constants.CANIVORE);
-        absoluteEncoderOffset = flEncoderOffset;
+        absoluteEncoderOffset = DriveConstants.FRONT_LEFT_ENCODER_OFFSET;
         break;
       // Front right
       case 1:
         driveTalon = new TalonFX(4, Constants.CANIVORE);
         turnTalon = new TalonFX(5, Constants.CANIVORE);
         cancoder = new CANcoder(6, Constants.CANIVORE);
-        absoluteEncoderOffset = frEncoderOffset;
+        absoluteEncoderOffset = DriveConstants.FRONT_RIGHT_ENCODER_OFFSET;
         break;
       // Back left
       case 2:
         driveTalon = new TalonFX(7, Constants.CANIVORE);
         turnTalon = new TalonFX(8, Constants.CANIVORE);
         cancoder = new CANcoder(9, Constants.CANIVORE);
-        absoluteEncoderOffset = blEncoderOffset;
+        absoluteEncoderOffset = DriveConstants.BACK_LEFT_ENCODER_OFFSET;
         break;
       // Back right
       case 3:
         driveTalon = new TalonFX(10, Constants.CANIVORE);
         turnTalon = new TalonFX(11, Constants.CANIVORE);
         cancoder = new CANcoder(12, Constants.CANIVORE);
-        absoluteEncoderOffset = brEncoderOffset;
+        absoluteEncoderOffset = DriveConstants.BACK_RIGHT_ENCODER_OFFSET;
         break;
       default:
         throw new RuntimeException("Invalid module index");
     }
-    final double DRIVE_GEAR_RATIO = (Constants.currentRobot == RobotType.COMPBOT)
-        ? DriveConstants.COMPBOT_DRIVE_GEAR_RATIO
-        : DriveConstants.PROTOBOT_DRIVE_GEAR_RATIO;
+    final double DRIVE_GEAR_RATIO = DriveConstants.DRIVE_GEAR_RATIO;
 
     var driveConfig = new TalonFXConfiguration();
 

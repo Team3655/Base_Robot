@@ -75,4 +75,32 @@ public class DriveConstants {
 
   public static final SwerveDriveKinematics kinematics = new SwerveDriveKinematics(moduleTranslations);
 
+  public static double DRIVE_GEAR_RATIO = (Constants.currentRobot == Constants.RobotType.COMPBOT)
+      ? COMPBOT_DRIVE_GEAR_RATIO
+      : PROTOBOT_DRIVE_GEAR_RATIO;
+
+  public static Rotation2d FRONT_LEFT_ENCODER_OFFSET = Constants.currentRobot == Constants.RobotType.COMPBOT
+      ? COMPBOT_FRONT_LEFT_ENCODER_OFFSET
+      : PROTOBOT_FRONT_LEFT_ENCODER_OFFSET;
+
+  public static Rotation2d FRONT_RIGHT_ENCODER_OFFSET = Constants.currentRobot == Constants.RobotType.COMPBOT
+      ? COMPBOT_FRONT_RIGHT_ENCODER_OFFSET
+      : PROTOBOT_FRONT_RIGHT_ENCODER_OFFSET;
+
+  public static Rotation2d BACK_LEFT_ENCODER_OFFSET = Constants.currentRobot == Constants.RobotType.COMPBOT
+      ? COMPBOT_BACK_LEFT_ENCODER_OFFSET
+      : PROTOBOT_BACK_LEFT_ENCODER_OFFSET;
+
+  public static Rotation2d BACK_RIGHT_ENCODER_OFFSET = Constants.currentRobot == Constants.RobotType.COMPBOT
+      ? COMPBOT_BACK_RIGHT_ENCODER_OFFSET
+      : PROTOBOT_BACK_RIGHT_ENCODER_OFFSET;
+
+  public static double ROBOT_MASS_KG = Constants.currentRobot == Constants.RobotType.COMPBOT
+      ? COMPBOT_MASS_KG
+      : PROTOBOT_MASS_KG;
+
+  public static double ROBOT_MOI = Constants.currentRobot == Constants.RobotType.COMPBOT
+      ? COMPBOT_MOI
+      : PROTOBOT_MOI;
+
 }
