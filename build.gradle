@@ -87,6 +87,30 @@ dependencies {
 test {
     useJUnitPlatform()
     systemProperty 'junit.jupiter.extensions.autodetection.enabled', 'true'
+    
+    // Generate test reports in multiple formats for CI/CD
+    reports {
+        // JUnit XML format for GitHub Actions and other CI tools
+        junitXml.required = true
+        junitXml.outputLocation = layout.buildDirectory.dir("test-results")
+        
+        // HTML reports for local viewing
+        html.required = true
+        html.outputLocation = layout.buildDirectory.dir("reports/tests")
+    }
+    
+    // Show test output in console
+    testLogging {
+        events "passed", "skipped", "failed"
+        exceptionFormat "full"
+        showStandardStreams = true
+    }
+    
+    // Fail the build if tests fail
+    ignoreFailures = false
+    
+    // Set working directory for tests
+    workingDir = projectDir
 }
 
 // Simulation configuration (e.g. environment variables).

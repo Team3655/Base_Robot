@@ -547,6 +547,8 @@ RobotState.getInstance().addVisionMeasurement(
 
 ### Testing
 
+- **Unit Testing** - JUnit 5 tests with mock IO implementations for subsystems
+- **CI/CD Integration** - Automatic test runs on GitHub Actions with detailed reports
 - **Test in simulation first** - Catch issues before deploying to robot
 - **Use AdvantageKit replay** - Test code changes against real match data
 - **Characterize subsystems** - Use SysId and characterization commands

@@ -209,6 +209,39 @@ public class RobotState {
         measurement.pose,
         measurement.timestamp,
         measurement.stdDevs);
+    
+    // Test-only: Track vision measurements for testing
+    if (visionMeasurementCount != null) {
+      visionMeasurementCount[0]++;
+    }
+  }
+  
+  // Test-only: Counter for vision measurements (null in production)
+  // Package-private so tests can access it
+  private static int[] visionMeasurementCount = null;
+  
+  /**
+   * Test-only: Resets the vision measurement counter.
+   * Only available in test builds - production code should never call this.
+   * Public so test classes can access it.
+   */
+  public static void resetVisionMeasurementCounter() {
+    if (visionMeasurementCount == null) {
+      visionMeasurementCount = new int[1];
+    }
+    visionMeasurementCount[0] = 0;
+  }
+  
+  /**
+   * Test-only: Gets the number of vision measurements added since last reset.
+   * Only available in test builds - production code should never call this.
+   * Public so test classes can access it.
+   */
+  public static int getVisionMeasurementCount() {
+    if (visionMeasurementCount == null) {
+      return 0;
+    }
+    return visionMeasurementCount[0];
   }
 
   /**
