@@ -1,16 +1,3 @@
-// Copyright 2021-2024 FRC 6328
-// http://github.com/Mechanical-Advantage
-//
-// This program is free software; you can redistribute it and/or
-// modify it under the terms of the GNU General Public License
-// version 3 as published by the Free Software Foundation or
-// available in the root directory of this project.
-//
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU General Public License for more details.
-
 package frc.robot.commands;
 
 import java.text.DecimalFormat;
@@ -45,6 +32,46 @@ import frc.robot.subsystems.drive.DriveConstants;
 import frc.robot.subsystems.drive.DriveSubsystem;
 import frc.robot.util.JoystickUtils;
 
+/**
+ * Factory class for creating drive-related commands.
+ * 
+ * <p>This class provides static factory methods for common drive commands. Commands
+ * are created using the command-based framework and can be composed, scheduled,
+ * and interrupted like any other command.
+ * 
+ * <p><b>Command Types:</b>
+ * <ul>
+ *   <li>Teleop commands: Joystick drive with field-relative control</li>
+ *   <li>Characterization commands: Feedforward and wheel radius measurement</li>
+ *   <li>Pathfinding commands: Dynamic pathfinding to target poses</li>
+ * </ul>
+ * 
+ * <p><b>Input Processing:</b> Commands in this class apply standard input processing:
+ * <ul>
+ *   <li>Deadband: Removes small joystick inputs near zero</li>
+ *   <li>Input shaping: Squares inputs for better low-speed control</li>
+ *   <li>Field-relative: Converts robot-relative to field-relative with alliance flipping</li>
+ * </ul>
+ * 
+ * <p><b>Usage:</b>
+ * <pre>{@code
+ * // Set as default command (runs continuously)
+ * drive.setDefaultCommand(DriveCommands.joystickDrive(
+ *     drive,
+ *     () -> controller.getLeftY(),
+ *     () -> controller.getLeftX(),
+ *     () -> controller.getRightX(),
+ *     1.0,
+ *     controller.leftBumper()
+ * ));
+ * 
+ * // Bind to button
+ * controller.a().onTrue(DriveCommands.pathFindToPose(
+ *     () -> targetPose,
+ *     drive
+ * ));
+ * }</pre>
+ */
 public class DriveCommands {
 
   private static final double DEADBAND = 0.1;
@@ -70,8 +97,34 @@ public class DriveCommands {
   }
 
   /**
-   * Field relative drive command using two joysticks (controlling linear and
-   * angular velocities).
+   * Creates a field-relative joystick drive command.
+   * 
+   * <p>This command processes joystick inputs and drives the robot field-relative.
+   * It applies deadband, input shaping, and handles slow mode when the slow button
+   * is pressed.
+   * 
+   * <p><b>Field-Relative Control:</b> The robot moves relative to the field, not
+   * relative to itself. Forward is always toward the opponent's alliance station,
+   * regardless of robot orientation. The command automatically flips for the red
+   * alliance.
+   * 
+   * <p><b>Input Processing:</b>
+   * <ul>
+   *   <li>Deadband: 0.1 (10% of joystick range)</li>
+   *   <li>Input shaping: Squares inputs for better low-speed precision</li>
+   *   <li>Slow mode: Multiplies linear velocity by multiplier when button held</li>
+   * </ul>
+   * 
+   * <p><b>Usage:</b> Typically set as the default command for the drive subsystem
+   * so it runs continuously during teleop.
+   * 
+   * @param drive The drive subsystem
+   * @param xSupplier Supplier for X-axis input (left/right)
+   * @param ySupplier Supplier for Y-axis input (forward/back)
+   * @param omegaSupplier Supplier for rotation input (counter-clockwise positive)
+   * @param multiplier Slow mode multiplier (applied to linear velocity when slow button held)
+   * @param slowButton Trigger for slow mode (when held, applies multiplier)
+   * @return A command that drives the robot field-relative based on joystick inputs
    */
   public static Command joystickDrive(
       DriveSubsystem drive,
@@ -92,11 +145,6 @@ public class DriveCommands {
           }
 
           double omega = JoystickUtils.curveInput(omegaSupplier.getAsDouble(), DEADBAND);
-
-          // Logger.recordOutput("Drive/Commands/omega", omega);
-          // Logger.recordOutput("Drive/Commands/linear velocity", linearVelocity);
-          // Logger.recordOutput("Drive/Commands/linear magnitude",
-          // linearVelocity.getNorm());
 
           // Convert to field relative speeds & send command
           ChassisSpeeds speeds = new ChassisSpeeds(
@@ -119,10 +167,28 @@ public class DriveCommands {
   }
 
   /**
-   * Measures the velocity feedforward constants for the drive motors.
-   *
-   * <p>
-   * This command should only be used in voltage control mode.
+   * Creates a command to measure feedforward constants (kS and kV) for drive motors.
+   * 
+   * <p>This command ramps up the drive voltage and measures the resulting velocity
+   * to calculate feedforward constants. The results are printed to the console when
+   * the command is cancelled.
+   * 
+   * <p><b>Procedure:</b>
+   * <ol>
+   *   <li>Wait for modules to orient (2 seconds)</li>
+   *   <li>Ramp voltage from 0V at 0.1 V/s</li>
+   *   <li>Record velocity samples</li>
+   *   <li>Calculate kS (static friction) and kV (velocity feedforward) using linear regression</li>
+   * </ol>
+   * 
+   * <p><b>Results:</b> When cancelled, prints kS and kV values to console. Update
+   * {@link DriveConstants#KS_DRIVE} and {@link DriveConstants#KV_DRIVE} with these values.
+   * 
+   * <p><b>Note:</b> This command should only be used in voltage control mode.
+   * Ensure modules are in voltage control before running.
+   * 
+   * @param drive The drive subsystem
+   * @return A command that measures feedforward constants
    */
   public static Command feedforwardCharacterization(DriveSubsystem drive) {
     List<Double> velocitySamples = new LinkedList<>();

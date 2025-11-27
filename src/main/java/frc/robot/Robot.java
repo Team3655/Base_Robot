@@ -1,15 +1,3 @@
-// Copyright 2021-2024 FRC 6328
-// http://github.com/Mechanical-Advantage
-// This program is free software; you can redistribute it and/or
-// modify it under the terms of the GNU General Public License
-// version 3 as published by the Free Software Foundation or
-// available in the root directory of this project.
-//
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU General Public License for more details.
-
 package frc.robot;
 
 import org.littletonrobotics.junction.LogFileUtil;
@@ -21,26 +9,53 @@ import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
 /**
- * The VM is configured to automatically run this class, and to call the
- * functions corresponding to
- * each mode, as described in the TimedRobot documentation. If you change the
- * name of this class or
- * the package after creating this project, you must also update the
- * build.gradle file in the
- * project.
+ * The main robot class that manages the robot lifecycle and AdvantageKit logging.
+ * 
+ * <p>This class extends {@link LoggedRobot} (from AdvantageKit) instead of {@link TimedRobot}
+ * to enable advanced logging and replay capabilities. The robot lifecycle follows WPILib's
+ * standard structure with initialization and periodic methods for each mode.
+ * 
+ * <p><b>Key Responsibilities:</b>
+ * <ul>
+ *   <li>Initialize AdvantageKit logger based on robot mode (REAL, SIM, REPLAY)</li>
+ *   <li>Instantiate RobotContainer (which creates all subsystems)</li>
+ *   <li>Run CommandScheduler every periodic cycle</li>
+ *   <li>Handle mode transitions (autonomous, teleop, disabled, test)</li>
+ * </ul>
+ * 
+ * <p><b>AdvantageKit Integration:</b>
+ * <ul>
+ *   <li>REAL mode: Logs to USB stick at "/U/logs" and NetworkTables</li>
+ *   <li>SIM mode: Logs to NetworkTables for visualization</li>
+ *   <li>REPLAY mode: Reads from log files and injects data into IO implementations</li>
+ * </ul>
+ * 
+ * <p><b>Important:</b> Do not instantiate subsystems here. All subsystem creation
+ * should happen in {@link RobotContainer}.
  */
 public class Robot extends LoggedRobot {
   private Command autonomousCommand;
   private RobotContainer robotContainer;
 
   /**
-   * This function is run when the robot is first started up and should be used
-   * for any
-   * initialization code.
+   * Initializes the robot when first started up.
+   * 
+   * <p>This method:
+   * <ul>
+   *   <li>Starts WPILib DataLogManager for basic logging</li>
+   *   <li>Configures AdvantageKit logger based on robot mode</li>
+   *   <li>Records build metadata (Git SHA, date, branch, etc.)</li>
+   *   <li>Sets up data receivers (USB logging, NetworkTables, replay source)</li>
+   *   <li>Creates RobotContainer (which initializes all subsystems)</li>
+   * </ul>
+   * 
+   * <p>The logger configuration is critical for AdvantageKit's functionality.
+   * Different modes require different data receivers to enable logging and replay.
    */
   @Override
   public void robotInit() {
@@ -101,7 +116,23 @@ public class Robot extends LoggedRobot {
     robotContainer = new RobotContainer();
   }
 
-  /** This function is called periodically during all modes. */
+  /**
+   * Called periodically during all robot modes (disabled, autonomous, teleop, test).
+   * 
+   * <p>This method runs the CommandScheduler, which is the heart of the command-based
+   * framework. The scheduler:
+   * <ul>
+   *   <li>Polls button/trigger states</li>
+   *   <li>Schedules newly-triggered commands</li>
+   *   <li>Executes running commands</li>
+   *   <li>Removes finished or interrupted commands</li>
+   *   <li>Calls subsystem periodic() methods</li>
+   * </ul>
+   * 
+   * <p><b>Critical:</b> This must be called every periodic cycle (every 20ms) for
+   * the command-based framework to function. Without this, no commands will run
+   * and subsystems won't update.
+   */
   @Override
   public void robotPeriodic() {
     // Runs the Scheduler. This is responsible for polling buttons, adding

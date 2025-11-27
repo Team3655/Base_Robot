@@ -1,13 +1,3 @@
-// This program is free software; you can redistribute it and/or
-// modify it under the terms of the GNU General Public License
-// version 3 as published by the Free Software Foundation or
-// available in the root directory of this project.
-//
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU General Public License for more details.
-
 package frc.robot.subsystems.drive;
 
 import edu.wpi.first.math.MathUtil;
@@ -22,11 +12,13 @@ import frc.robot.Constants;
 import frc.robot.Constants.RobotType;
 
 /**
- * Physics sim implementation of module IO. The sim models are configured using a set of module
+ * Physics sim implementation of module IO. The sim models are configured using
+ * a set of module
  * constants from Phoenix. Simulation is always based on voltage control.
  */
 public class ModuleIOSim implements ModuleIO {
-  // TunerConstants doesn't support separate sim constants, so they are declared locally
+  // TunerConstants doesn't support separate sim constants, so they are declared
+  // locally
   private static final double DRIVE_KP = 0.05;
   private static final double DRIVE_KD = 0.0;
   private static final double DRIVE_KS = 0.0;
@@ -53,19 +45,17 @@ public class ModuleIOSim implements ModuleIO {
 
   public ModuleIOSim() {
     // Create drive and turn sim models
-        final double DRIVE_GEAR_RATIO = (Constants.currentRobot == RobotType.COMPBOT)
+    final double DRIVE_GEAR_RATIO = (Constants.currentRobot == RobotType.COMPBOT)
         ? DriveConstants.COMPBOT_DRIVE_GEAR_RATIO
         : DriveConstants.PROTOBOT_DRIVE_GEAR_RATIO;
-    driveSim =
-        new DCMotorSim(
-            LinearSystemId.createDCMotorSystem(
-                DRIVE_GEARBOX, DRIVE_INERTIA, DRIVE_GEAR_RATIO),
-            DRIVE_GEARBOX);
-    turnSim =
-        new DCMotorSim(
-            LinearSystemId.createDCMotorSystem(
-                TURN_GEARBOX, STEER_INERTIA, DriveConstants.TURN_GEAR_RATIO),
-            TURN_GEARBOX);
+    driveSim = new DCMotorSim(
+        LinearSystemId.createDCMotorSystem(
+            DRIVE_GEARBOX, DRIVE_INERTIA, DRIVE_GEAR_RATIO),
+        DRIVE_GEARBOX);
+    turnSim = new DCMotorSim(
+        LinearSystemId.createDCMotorSystem(
+            TURN_GEARBOX, STEER_INERTIA, DriveConstants.TURN_GEAR_RATIO),
+        TURN_GEARBOX);
 
     // Enable wrapping for turn PID
     turnController.enableContinuousInput(-Math.PI, Math.PI);
@@ -75,8 +65,7 @@ public class ModuleIOSim implements ModuleIO {
   public void updateInputs(ModuleIOInputs inputs) {
     // Run closed-loop control
     if (driveClosedLoop) {
-      driveAppliedVolts =
-          driveFFVolts + driveController.calculate(driveSim.getAngularVelocityRadPerSec());
+      driveAppliedVolts = driveFFVolts + driveController.calculate(driveSim.getAngularVelocityRadPerSec());
     } else {
       driveController.reset();
     }
@@ -105,10 +94,11 @@ public class ModuleIOSim implements ModuleIO {
     inputs.turnAppliedVolts = turnAppliedVolts;
     inputs.turnCurrentAmps = Math.abs(turnSim.getCurrentDrawAmps());
 
-    // Update odometry inputs (50Hz because high-frequency odometry in sim doesn't matter)
-    inputs.odometryTimestamps = new double[] {Timer.getFPGATimestamp()};
-    inputs.odometryDrivePositionsRad = new double[] {inputs.drivePositionRad};
-    inputs.odometryTurnPositions = new Rotation2d[] {inputs.turnPosition};
+    // Update odometry inputs (50Hz because high-frequency odometry in sim doesn't
+    // matter)
+    inputs.odometryTimestamps = new double[] { Timer.getFPGATimestamp() };
+    inputs.odometryDrivePositionsRad = new double[] { inputs.drivePositionRad };
+    inputs.odometryTurnPositions = new Rotation2d[] { inputs.turnPosition };
   }
 
   @Override

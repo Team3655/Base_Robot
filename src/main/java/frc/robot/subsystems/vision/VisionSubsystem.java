@@ -1,7 +1,3 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
-
 package frc.robot.subsystems.vision;
 
 import java.io.IOException;
@@ -25,6 +21,69 @@ import frc.robot.subsystems.vision.VisionConstants.ObservationType;
 import frc.robot.subsystems.vision.VisionConstants.PoseObservation;
 import frc.robot.subsystems.vision.VisionConstants.TargetObservation;
 
+/**
+ * Subsystem for managing vision processing and pose estimation from cameras.
+ * 
+ * <p>
+ * This subsystem processes vision data from one or more cameras to estimate the
+ * robot's pose on the field using AprilTags. It filters invalid measurements
+ * and
+ * adds valid ones to {@link RobotState} for fusion with odometry.
+ * 
+ * <p>
+ * <b>Key Features:</b>
+ * <ul>
+ * <li>Supports multiple cameras (variable number via constructor)</li>
+ * <li>AprilTag detection and pose estimation</li>
+ * <li>Pose filtering (rejects invalid measurements)</li>
+ * <li>Field boundary checking</li>
+ * <li>Standard deviation calculation based on tag distance and count</li>
+ * <li>Automatic alerts for disconnected cameras</li>
+ * </ul>
+ * 
+ * <p>
+ * <b>IO Layer Pattern:</b> This subsystem uses {@link VisionIO} interfaces.
+ * Different implementations (Limelight / PhotonVisionSimulation) can be
+ * provided
+ * without changing the subsystem code.
+ * 
+ * <p>
+ * <b>Pose Filtering:</b> Vision measurements are filtered based on:
+ * <ul>
+ * <li>Tag count: Must have at least one tag</li>
+ * <li>Ambiguity: Must be below threshold (default 0.25)</li>
+ * <li>Distance: Single tags max 3.5m, multi-tags max 7.5m</li>
+ * <li>Field bounds: Must be within field boundaries</li>
+ * </ul>
+ * 
+ * <p>
+ * <b>Standard Deviations:</b> Calculated based on tag distance and count.
+ * Closer tags and more tags result in lower uncertainty (higher trust). The
+ * pose
+ * estimator uses these to weight vision measurements appropriately.
+ * 
+ * <p>
+ * <b>Data Flow:</b> Valid pose observations are added to {@link RobotState}
+ * via {@link RobotState#addVisionMeasurement(VisionMeasurement)}. RobotState
+ * then
+ * fuses them with odometry for the best pose estimate.
+ * 
+ * <p>
+ * <b>Usage:</b>
+ * 
+ * <pre>{@code
+ * // Get target observation for aiming (not pose estimation)
+ * TargetObservation obs = vision.getLatestTargetObservation(0);
+ * Rotation2d tx = obs.tx(); // Horizontal angle to target
+ * }</pre>
+ * 
+ * <p>
+ * <b>Note:</b> This subsystem doesn't expose commands directly. Vision
+ * measurements
+ * are automatically processed and added to RobotState. For targeting (not pose
+ * estimation),
+ * use {@link #getLatestTargetObservation(int)}.
+ */
 public class VisionSubsystem extends SubsystemBase {
 
   private final VisionIOInputsAutoLogged[] inputs;
@@ -32,6 +91,29 @@ public class VisionSubsystem extends SubsystemBase {
   private final Alert[] disconnectedAlerts;
   private AprilTagFieldLayout tagLayout;
 
+  /**
+   * Constructs a VisionSubsystem with the specified camera IO implementations.
+   * 
+   * <p>
+   * This constructor supports multiple cameras by accepting a variable number of
+   * VisionIO implementations. Each camera is processed independently in
+   * periodic().
+   * 
+   * <p>
+   * <b>IO Implementations:</b> The IO implementations are provided by
+   * {@link RobotContainer}
+   * based on robot mode. This demonstrates the IO layer pattern - the subsystem
+   * doesn't
+   * know which implementation it receives (Limelight, PhotonVision, Simulation,
+   * etc.).
+   * 
+   * <p>
+   * <b>AprilTag Layout:</b> Loads the AprilTag field layout for the current game
+   * year.
+   * Update the field layout constant if using a different year's field.
+   * 
+   * @param io Variable number of VisionIO implementations (one per camera)
+   */
   public VisionSubsystem(VisionIO... io) {
     this.io = io;
     this.inputs = new VisionIOInputsAutoLogged[io.length];
@@ -54,17 +136,27 @@ public class VisionSubsystem extends SubsystemBase {
     }
   }
 
+  /**
+   * Gets the latest target observation from a specific camera.
+   * 
+   * <p>
+   * This method returns targeting data (angles to target) rather than pose
+   * estimation
+   * data. Use this for aiming at targets, not for pose estimation.
+   * 
+   * <p>
+   * <b>Note:</b> For pose estimation, the subsystem automatically processes
+   * observations and adds them to RobotState. This method is only for targeting.
+   * 
+   * @param cameraID The index of the camera (0-based, matches order in
+   *                 constructor)
+   * @return The latest target observation with tx and ty angles
+   */
   public TargetObservation getLatestTargetObservation(int cameraID) {
     return new TargetObservation(inputs[cameraID].latestObservation.tx(), inputs[cameraID].latestObservation.ty());
   }
 
   public boolean isInsideField(PoseObservation observation) {
-    // Directions are relative to driver's perspective
-    // Blue Left: y = 0.7587x + 267.2
-    // Blue Right: y = -0.7587x - 49.95
-    // Red Left: y = 0.7587x - 474.187
-    // Red Right: y = -0.7587x + 791.337
-
     double slope = Units.inchesToMeters(0.7587);
     double x = observation.pose().getX();
     double y = observation.pose().getY();
@@ -82,6 +174,35 @@ public class VisionSubsystem extends SubsystemBase {
     }
   }
 
+  /**
+   * Called every robot periodic cycle (every 20ms).
+   * 
+   * <p>
+   * This method:
+   * <ol>
+   * <li>Updates inputs from all camera IO implementations</li>
+   * <li>Checks camera connections and alerts if disconnected</li>
+   * <li>Processes pose observations from each camera</li>
+   * <li>Filters invalid measurements (distance, ambiguity, field bounds)</li>
+   * <li>Calculates standard deviations based on tag distance and count</li>
+   * <li>Adds valid measurements to RobotState for pose fusion</li>
+   * <li>Logs vision data for debugging</li>
+   * </ol>
+   * 
+   * <p>
+   * <b>Pose Processing:</b> Each camera may produce multiple pose observations
+   * per cycle. Each observation is validated and processed independently. Valid
+   * observations are added to RobotState with calculated uncertainty.
+   * 
+   * <p>
+   * <b>Filtering:</b> Observations are rejected if they:
+   * <ul>
+   * <li>Have no tags detected</li>
+   * <li>Exceed ambiguity threshold</li>
+   * <li>Are too far away (single tag: 3.5m, multi-tag: 7.5m)</li>
+   * <li>Are outside field boundaries</li>
+   * </ul>
+   */
   @Override
   public void periodic() {
 
