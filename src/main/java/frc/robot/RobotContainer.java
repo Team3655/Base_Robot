@@ -25,35 +25,49 @@ import frc.robot.subsystems.vision.VisionSubsystem;
 import frc.robot.util.CommandNXT;
 
 /**
- * The central container for the robot that manages subsystems, IO implementations, and controls.
+ * The central container for the robot that manages subsystems, IO
+ * implementations, and controls.
  * 
- * <p>This class is the heart of the robot's architecture. It:
+ * <p>
+ * This class is the heart of the robot's architecture. It:
  * <ul>
- *   <li>Initializes all subsystems with appropriate IO implementations based on robot mode</li>
- *   <li>Configures button bindings and controller mappings</li>
- *   <li>Sets up autonomous command chooser</li>
- *   <li>Manages driver-specific control schemes</li>
+ * <li>Initializes all subsystems with appropriate IO implementations based on
+ * robot mode</li>
+ * <li>Configures button bindings and controller mappings</li>
+ * <li>Sets up autonomous command chooser</li>
+ * <li>Manages driver-specific control schemes</li>
  * </ul>
  * 
- * <p><b>IO Layer Pattern:</b> This class demonstrates the IO layer pattern recommended by
- * AdvantageKit. Different IO implementations are instantiated based on {@link Constants#currentMode}:
+ * <p>
+ * <b>IO Layer Pattern:</b> This class demonstrates the IO layer pattern
+ * recommended by
+ * AdvantageKit. Different IO implementations are instantiated based on
+ * {@link Constants#currentMode}:
  * <ul>
- *   <li>REAL: Hardware IO implementations (e.g., {@link ModuleIOTalonFX}, {@link GyroIOPigeon2})</li>
- *   <li>SIM: Simulation IO implementations (e.g., {@link ModuleIOSim})</li>
- *   <li>REPLAY: Empty IO implementations (AdvantageKit injects data from logs)</li>
+ * <li>REAL: Hardware IO implementations (e.g., {@link ModuleIOTalonFX},
+ * {@link GyroIOPigeon2})</li>
+ * <li>SIM: Simulation IO implementations (e.g., {@link ModuleIOSim})</li>
+ * <li>REPLAY: Empty IO implementations (AdvantageKit injects data from
+ * logs)</li>
  * </ul>
  * 
- * <p><b>Subsystem Initialization:</b> All subsystems should be created here, not in {@link Robot}.
- * This keeps initialization logic centralized and makes it easy to see the robot's structure.
+ * <p>
+ * <b>Subsystem Initialization:</b> All subsystems should be created here, not
+ * in {@link Robot}.
+ * This keeps initialization logic centralized and makes it easy to see the
+ * robot's structure.
  * 
- * <p><b>Control Schemes:</b> Supports multiple driver configurations via {@link Constants#currentDriver}:
+ * <p>
+ * <b>Control Schemes:</b> Supports multiple driver configurations via
+ * {@link Constants#currentDriver}:
  * <ul>
- *   <li>MAIN: Competition driver using CommandNXT controllers</li>
- *   <li>PROGRAMMING: Development using Xbox controllers</li>
- *   <li>MACBOOK: Simulation/testing on MacBook with different axis mappings</li>
+ * <li>MAIN: Competition driver using CommandNXT controllers</li>
+ * <li>PROGRAMMING: Development using Xbox controllers</li>
+ * <li>MACBOOK: Simulation/testing on MacBook with different axis mappings</li>
  * </ul>
  * 
- * @see <a href="https://docs.advantagekit.org/category/data-flow">AdvantageKit Data Flow</a>
+ * @see <a href="https://docs.advantagekit.org/category/data-flow">AdvantageKit
+ *      Data Flow</a>
  */
 public class RobotContainer {
 
@@ -86,17 +100,23 @@ public class RobotContainer {
   /**
    * Constructs the RobotContainer and initializes all subsystems.
    * 
-   * <p>This constructor:
+   * <p>
+   * This constructor:
    * <ol>
-   *   <li>Creates subsystems with appropriate IO implementations based on robot mode</li>
-   *   <li>Sets up PathPlanner AutoBuilder for autonomous routines</li>
-   *   <li>Adds SysId and characterization commands to auto chooser</li>
-   *   <li>Configures button bindings for the selected driver</li>
+   * <li>Creates subsystems with appropriate IO implementations based on robot
+   * mode</li>
+   * <li>Sets up PathPlanner AutoBuilder for autonomous routines</li>
+   * <li>Adds SysId and characterization commands to auto chooser</li>
+   * <li>Configures button bindings for the selected driver</li>
    * </ol>
    * 
-   * <p><b>IO Implementation Selection:</b> The switch statement on {@link Constants#currentMode}
-   * demonstrates the IO layer pattern. Each mode uses different IO implementations, but the
-   * subsystems remain unchanged. This is why the IO layer pattern is so powerful - subsystems
+   * <p>
+   * <b>IO Implementation Selection:</b> The switch statement on
+   * {@link Constants#currentMode}
+   * demonstrates the IO layer pattern. Each mode uses different IO
+   * implementations, but the
+   * subsystems remain unchanged. This is why the IO layer pattern is so powerful
+   * - subsystems
    * are hardware-agnostic.
    */
   public RobotContainer() {
@@ -180,26 +200,36 @@ public class RobotContainer {
   /**
    * Configures button bindings and control schemes based on the selected driver.
    * 
-   * <p>This method sets up:
+   * <p>
+   * This method sets up:
    * <ul>
-   *   <li>Default commands for subsystems (e.g., joystick drive)</li>
-   *   <li>Button-triggered commands (e.g., zero heading, stop with X)</li>
-   *   <li>Operator controls for mechanisms</li>
+   * <li>Default commands for subsystems (e.g., joystick drive)</li>
+   * <li>Button-triggered commands (e.g., zero heading, stop with X)</li>
+   * <li>Operator controls for mechanisms</li>
    * </ul>
    * 
-   * <p>The control scheme is selected via {@link Constants#currentDriver}. Each driver
-   * may use different controllers or have different button mappings based on their
+   * <p>
+   * The control scheme is selected via {@link Constants#currentDriver}. Each
+   * driver
+   * may use different controllers or have different button mappings based on
+   * their
    * preferences or the development environment.
    * 
-   * <p><b>Default Commands:</b> Use {@link SubsystemBase#setDefaultCommand(Command)} to
-   * set commands that run continuously when no other command requires the subsystem.
+   * <p>
+   * <b>Default Commands:</b> Use {@link SubsystemBase#setDefaultCommand(Command)}
+   * to
+   * set commands that run continuously when no other command requires the
+   * subsystem.
    * 
-   * <p><b>Button Bindings:</b> Use trigger methods (e.g., {@code button().onTrue()}) to
-   * bind commands to button events. These are managed automatically by the CommandScheduler.
+   * <p>
+   * <b>Button Bindings:</b> Use trigger methods (e.g., {@code button().onTrue()})
+   * to
+   * bind commands to button events. These are managed automatically by the
+   * CommandScheduler.
    */
   private void configureButtonBindings() {
 
-    //region Driver controls
+    // region Driver controls
     switch (Constants.currentDriver) {
       case MAIN:
         drive.setDefaultCommand(

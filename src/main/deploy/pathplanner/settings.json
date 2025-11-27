@@ -33,5 +33,5 @@
   "robotLength": 0.86,
   "driveMotorType": "krakenX60FOC",
   "defaultMaxVel": 4.0,
-  "driveWheelRadius": 0.0492506
+  "driveWheelRadius": 0.048412399999999994
 }

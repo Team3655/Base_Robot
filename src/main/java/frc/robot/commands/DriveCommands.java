@@ -27,6 +27,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.Constants;
 import frc.robot.RobotState;
 import frc.robot.subsystems.drive.DriveConstants;
 import frc.robot.subsystems.drive.DriveSubsystem;
@@ -35,25 +36,33 @@ import frc.robot.util.JoystickUtils;
 /**
  * Factory class for creating drive-related commands.
  * 
- * <p>This class provides static factory methods for common drive commands. Commands
+ * <p>
+ * This class provides static factory methods for common drive commands.
+ * Commands
  * are created using the command-based framework and can be composed, scheduled,
  * and interrupted like any other command.
  * 
- * <p><b>Command Types:</b>
+ * <p>
+ * <b>Command Types:</b>
  * <ul>
- *   <li>Teleop commands: Joystick drive with field-relative control</li>
- *   <li>Characterization commands: Feedforward and wheel radius measurement</li>
- *   <li>Pathfinding commands: Dynamic pathfinding to target poses</li>
+ * <li>Teleop commands: Joystick drive with field-relative control</li>
+ * <li>Characterization commands: Feedforward and wheel radius measurement</li>
+ * <li>Pathfinding commands: Dynamic pathfinding to target poses</li>
  * </ul>
  * 
- * <p><b>Input Processing:</b> Commands in this class apply standard input processing:
+ * <p>
+ * <b>Input Processing:</b> Commands in this class apply standard input
+ * processing:
  * <ul>
- *   <li>Deadband: Removes small joystick inputs near zero</li>
- *   <li>Input shaping: Squares inputs for better low-speed control</li>
- *   <li>Field-relative: Converts robot-relative to field-relative with alliance flipping</li>
+ * <li>Deadband: Removes small joystick inputs near zero</li>
+ * <li>Input shaping: Squares inputs for better low-speed control</li>
+ * <li>Field-relative: Converts robot-relative to field-relative with alliance
+ * flipping</li>
  * </ul>
  * 
- * <p><b>Usage:</b>
+ * <p>
+ * <b>Usage:</b>
+ * 
  * <pre>{@code
  * // Set as default command (runs continuously)
  * drive.setDefaultCommand(DriveCommands.joystickDrive(
@@ -62,14 +71,12 @@ import frc.robot.util.JoystickUtils;
  *     () -> controller.getLeftX(),
  *     () -> controller.getRightX(),
  *     1.0,
- *     controller.leftBumper()
- * ));
+ *     controller.leftBumper()));
  * 
  * // Bind to button
  * controller.a().onTrue(DriveCommands.pathFindToPose(
  *     () -> targetPose,
- *     drive
- * ));
+ *     drive));
  * }</pre>
  */
 public class DriveCommands {
@@ -99,32 +106,39 @@ public class DriveCommands {
   /**
    * Creates a field-relative joystick drive command.
    * 
-   * <p>This command processes joystick inputs and drives the robot field-relative.
-   * It applies deadband, input shaping, and handles slow mode when the slow button
+   * <p>
+   * This command processes joystick inputs and drives the robot field-relative.
+   * It applies deadband, input shaping, and handles slow mode when the slow
+   * button
    * is pressed.
    * 
-   * <p><b>Field-Relative Control:</b> The robot moves relative to the field, not
+   * <p>
+   * <b>Field-Relative Control:</b> The robot moves relative to the field, not
    * relative to itself. Forward is always toward the opponent's alliance station,
    * regardless of robot orientation. The command automatically flips for the red
    * alliance.
    * 
-   * <p><b>Input Processing:</b>
+   * <p>
+   * <b>Input Processing:</b>
    * <ul>
-   *   <li>Deadband: 0.1 (10% of joystick range)</li>
-   *   <li>Input shaping: Squares inputs for better low-speed precision</li>
-   *   <li>Slow mode: Multiplies linear velocity by multiplier when button held</li>
+   * <li>Deadband: 0.1 (10% of joystick range)</li>
+   * <li>Input shaping: Squares inputs for better low-speed precision</li>
+   * <li>Slow mode: Multiplies linear velocity by multiplier when button held</li>
    * </ul>
    * 
-   * <p><b>Usage:</b> Typically set as the default command for the drive subsystem
+   * <p>
+   * <b>Usage:</b> Typically set as the default command for the drive subsystem
    * so it runs continuously during teleop.
    * 
-   * @param drive The drive subsystem
-   * @param xSupplier Supplier for X-axis input (left/right)
-   * @param ySupplier Supplier for Y-axis input (forward/back)
+   * @param drive         The drive subsystem
+   * @param xSupplier     Supplier for X-axis input (left/right)
+   * @param ySupplier     Supplier for Y-axis input (forward/back)
    * @param omegaSupplier Supplier for rotation input (counter-clockwise positive)
-   * @param multiplier Slow mode multiplier (applied to linear velocity when slow button held)
-   * @param slowButton Trigger for slow mode (when held, applies multiplier)
-   * @return A command that drives the robot field-relative based on joystick inputs
+   * @param multiplier    Slow mode multiplier (applied to linear velocity when
+   *                      slow button held)
+   * @param slowButton    Trigger for slow mode (when held, applies multiplier)
+   * @return A command that drives the robot field-relative based on joystick
+   *         inputs
    */
   public static Command joystickDrive(
       DriveSubsystem drive,
@@ -167,24 +181,32 @@ public class DriveCommands {
   }
 
   /**
-   * Creates a command to measure feedforward constants (kS and kV) for drive motors.
+   * Creates a command to measure feedforward constants (kS and kV) for drive
+   * motors.
    * 
-   * <p>This command ramps up the drive voltage and measures the resulting velocity
-   * to calculate feedforward constants. The results are printed to the console when
+   * <p>
+   * This command ramps up the drive voltage and measures the resulting velocity
+   * to calculate feedforward constants. The results are printed to the console
+   * when
    * the command is cancelled.
    * 
-   * <p><b>Procedure:</b>
+   * <p>
+   * <b>Procedure:</b>
    * <ol>
-   *   <li>Wait for modules to orient (2 seconds)</li>
-   *   <li>Ramp voltage from 0V at 0.1 V/s</li>
-   *   <li>Record velocity samples</li>
-   *   <li>Calculate kS (static friction) and kV (velocity feedforward) using linear regression</li>
+   * <li>Wait for modules to orient (2 seconds)</li>
+   * <li>Ramp voltage from 0V at 0.1 V/s</li>
+   * <li>Record velocity samples</li>
+   * <li>Calculate kS (static friction) and kV (velocity feedforward) using linear
+   * regression</li>
    * </ol>
    * 
-   * <p><b>Results:</b> When cancelled, prints kS and kV values to console. Update
-   * {@link DriveConstants#KS_DRIVE} and {@link DriveConstants#KV_DRIVE} with these values.
+   * <p>
+   * <b>Results:</b> When cancelled, prints kS and kV values to console. Update
+   * {@link DriveConstants#KS_DRIVE} and {@link DriveConstants#KV_DRIVE} with
+   * these values.
    * 
-   * <p><b>Note:</b> This command should only be used in voltage control mode.
+   * <p>
+   * <b>Note:</b> This command should only be used in voltage control mode.
    * Ensure modules are in voltage control before running.
    * 
    * @param drive The drive subsystem
@@ -295,7 +317,7 @@ public class DriveCommands {
                   for (int i = 0; i < 4; i++) {
                     state.wheelDelta += Math.abs(positions[i] - state.positions[i]) / 4.0;
                   }
-                  state.wheelRadius = (state.gyroDelta * DriveConstants.DRIVE_BASE_RADIUS) / state.wheelDelta;
+                  state.wheelRadius = (state.gyroDelta * Constants.DRIVE_BASE_RADIUS) / state.wheelDelta;
 
                   Logger.recordOutput("Drive/Commands/WheelRadius/Wheel Radius", state.wheelRadius);
                 })
